@@ -11,6 +11,7 @@ const path = require("path");
 const { GoogleGenAI } = require("@google/genai");
 const { MODEL, MIME, FOLDERS, REQUIRED_ENV } = require("./config");
 const { withRetry, describeError } = require("./retry");
+const alert = require("./alert");
 
 const args = Object.fromEntries(
   process.argv.slice(2).map((a) => {
@@ -37,24 +38,27 @@ function slugify(s) {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
 }
 
-function fail(stage, name, err) {
-  record(stage, name, false, describeError(err));
+async function fail(stage, name, err) {
+  const detail = describeError(err);
+  record(stage, name, false, detail);
   printTable();
+  const src = args.file ? path.basename(String(args.file)) : "no file";
+  await alert.send(`Pipeline failed at stage ${stage} (${name}) on ${src}: ${detail}`.slice(0, 500));
   process.exit(1);
 }
 
 async function main() {
   // Stage 0: env check
   const missing = REQUIRED_ENV.filter((k) => !process.env[k]);
-  if (missing.length) fail(0, "env", new Error(`missing: ${missing.join(", ")}`));
+  if (missing.length) await fail(0, "env", new Error(`missing: ${missing.join(", ")}`));
   record(0, "env", true, `model=${MODEL}`);
   if (MAX_STAGE === 0) return printTable();
 
-  if (!args.file) fail(1, "ingest", new Error("pass --file=<path>"));
+  if (!args.file) await fail(1, "ingest", new Error("pass --file=<path>"));
   const filePath = path.resolve(args.file);
   const ext = path.extname(filePath).toLowerCase();
   const mime = MIME[ext];
-  if (!mime) fail(1, "ingest", new Error(`unsupported type: ${ext}`));
+  if (!mime) await fail(1, "ingest", new Error(`unsupported type: ${ext}`));
   const baseName = path.basename(filePath, ext);
   const cacheFile = path.join(CACHE_DIR, `${slugify(baseName)}.stage2.json`);
 
@@ -79,7 +83,7 @@ async function main() {
       record(1, "ingest", true, `uploaded ${path.basename(filePath)}`);
     }
   } catch (err) {
-    fail(1, "ingest", err);
+    await fail(1, "ingest", err);
   }
   if (MAX_STAGE === 1) return printTable();
 
@@ -120,7 +124,7 @@ async function main() {
       record(2, "strategist", true, Object.keys(angles.angles || {}).join(","));
     }
   } catch (err) {
-    fail(2, "strategist", err);
+    await fail(2, "strategist", err);
   }
   if (MAX_STAGE === 2) return printTable();
 
@@ -143,7 +147,7 @@ async function main() {
     director = JSON.parse(res.text);
     record(3, "director", true, `hook: ${String(director.hook).slice(0, 40)}`);
   } catch (err) {
-    fail(3, "director", err);
+    await fail(3, "director", err);
   }
   if (MAX_STAGE === 3) return printTable();
 
@@ -165,9 +169,9 @@ async function main() {
     fs.writeFileSync(path.join(dir, "content_package.json"), JSON.stringify(pkg, null, 2));
     record(4, "package", true, path.relative(__dirname, dir));
   } catch (err) {
-    fail(4, "package", err);
+    await fail(4, "package", err);
   }
   printTable();
 }
 
-main();
+main().catch((err) => fail("?", "unexpected", err));

@@ -20,7 +20,7 @@ Legend: `[x]` done, `[ ]` to do. Format: ID (priority, minutes, depends on) task
 - [x] 1.6 (P0, 30m, 1.3) Stage flags and PASS/FAIL table (stages 0-4 done; stage 5 vault and 6 notify arrive with 4B.1 and 6A.2). TEST: `node transcribe.js --stage=0`.
 - [x] 1.9 (P0, 45m) retry.js: IPv4-first, timeouts, retries network drops and 5xx/429. TEST: simulated 503 recovers after 2 tries.
 - [x] 1.10 (P0, 30m) Cache Stage 2 so a failed Stage 3 does not repeat the transcription. TEST: second run shows "from cache".
-- [ ] 1.0 (P0, 35m) HUSTLE: Slack bot + private #content-os-alerts channel, token in .env. TEST: curl test message appears.
+- [x] 1.0 (P0, 35m) HUSTLE: Slack bot + private #content-os-alerts channel, token in .env. TEST: curl test message appears.
 - [ ] 1.7 (P0, 30m, 1.0) alert.js Slack helper. TEST: `node -e "require('./alert').send('test')"` posts.
 - [ ] 1.8 (P0, 30m, 1.7) Call alert in every stage catch. TEST: bad API key sends a Slack alert in about 10s.
 - [ ] 1.11 (P2, 10m) Load dotenv once. TEST: only one "injected env" line prints.

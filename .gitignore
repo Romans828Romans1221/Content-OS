@@ -1,0 +1,22 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Media never goes in Git (keep folder structure with .gitkeep)
+00-Personal-B-Roll/*
+01-Raw-Inbox/*
+02-Ready-To-Publish/*
+03-Published/*
+00-Brand-Assets/music/*
+00-Brand-Assets/fonts/*
+!**/.gitkeep
+
+# Local state
+.processed.json
+.cache/
+*.log
+.DS_Store

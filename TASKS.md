@@ -23,7 +23,7 @@ Legend: `[x]` done, `[ ]` to do. Format: ID (priority, minutes, depends on) task
 - [x] 1.0 (P0, 35m) HUSTLE: Slack bot + private #content-os-alerts channel, token in .env. TEST: curl test message appears.
 - [x] 1.7 (P0, 30m, 1.0) alert.js Slack helper. TEST: `node -e "require('./alert').send('test')"` posts.
 - [x] 1.8 (P0, 30m, 1.7) Call alert in every stage catch. TEST: bad API key sends a Slack alert in about 10s.
-- [ ] 1.11 (P2, 10m) Load dotenv once. TEST: only one "injected env" line prints.
+- [x] 1.11 (P2, 10m) Load dotenv once. TEST: only one "injected env" line prints.
 
 ## Epic 2: Ingest
 - [ ] 2A.1 (P0, 30m, 1.2) Inbox scanner. TEST: `node ingest.js --list` shows each file with its type.

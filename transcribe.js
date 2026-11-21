@@ -5,7 +5,6 @@
 //   node transcribe.js --file=... --fresh         ignore the stage 2 cache
 // Stages: 0 env, 1 ingest, 2 strategist, 3 director, 4 package (written to disk)
 // Stage 5 (vault) and 6 (Slack approval) are added in later sprints.
-require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
 const { GoogleGenAI } = require("@google/genai");

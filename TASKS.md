@@ -1,6 +1,6 @@
 # ContentOS Task Tracker
 
-Status as of Sat Nov 21, 2026: **Phase 0 complete.** Next: Phase 1 (MVP loop).
+Status as of Mon Nov 23, 2026: **Phase 0 complete. Phase 1 in progress: Slack alerts (1.0, 1.7, 1.8), dotenv fix (1.11) and persona.json (3A.1) done.** Next: Supabase (4A.1).
 
 ## How a task becomes "done" (version control rule)
 1. Run the task's TEST. It must pass.
@@ -24,6 +24,7 @@ Legend: `[x]` done, `[ ]` to do. Format: ID (priority, minutes, depends on) task
 - [x] 1.7 (P0, 30m, 1.0) alert.js Slack helper. TEST: `node -e "require('./alert').send('test')"` posts.
 - [x] 1.8 (P0, 30m, 1.7) Call alert in every stage catch. TEST: bad API key sends a Slack alert in about 10s.
 - [x] 1.11 (P2, 10m) Load dotenv once. TEST: only one "injected env" line prints.
+- [ ] 1.12 (P2, 15m) Save the commit guard in the repo as scripts/pre-commit.sh plus a one-line install note, because .git/hooks is not versioned and is lost on a re-clone. TEST: fresh clone, run the install line, a staged fake key is blocked.
 
 ## Epic 2: Ingest
 - [ ] 2A.1 (P0, 30m, 1.2) Inbox scanner. TEST: `node ingest.js --list` shows each file with its type.
@@ -106,6 +107,15 @@ Legend: `[x]` done, `[ ]` to do. Format: ID (priority, minutes, depends on) task
 - [ ] 9.3 (P3, 30m) HUSTLE: weekly analytics note into inbox. TEST: appears in `--list`.
 - [ ] 9.4 (P3, 60m, 9.3) Strategist reads latest analytics note. TEST: angles mention it.
 
+## Next up (week of Nov 23)
+- Tue hustle: 4A.1 Supabase project + content_vault table.
+- Wed hustle: write one real weekly breakdown as a .md file into 01-Raw-Inbox (the real test input).
+- Thu hustle: 2B.1 test the text (.md) path with that file.
+- Fri sprint: 3B.1, 3B.5, 3B.4, 3B.3 (persona on every call, not_present angles, schema check + retry + alert, fidelity script).
+- Sat sprint: 5A.1, 5A.2, 5A.7, 4B.1 (text packs, length checks, final.md gate, vault insert).
+- Following week: 6A.1-6A.4 (Make approval flow), then tag phase-1-done.
+- Sunday: Sabbath. No code, no commits.
+
 ## Phase gates (tag when true)
 - [x] phase-0-done: package folder with content_package.json exists (Nov 21, 2026).
 - [ ] phase-1-done: a real weekly breakdown goes .md -> packs -> your final.md -> Slack Approve -> status=approved.
@@ -113,3 +123,10 @@ Legend: `[x]` done, `[ ]` to do. Format: ID (priority, minutes, depends on) task
 - [ ] phase-3-done: a brief lists your own clips and beats by filename.
 - [ ] phase-4-done: rough cut renders from a toggle.
 - [ ] phase-5-done: semantic search + archive + feedback loop working.
+
+## Progress log
+- Sat Nov 21, 2026: Phase 0 done and tagged phase-0-done. Private GitHub repo live (Romans828Romans1221/Content-OS). Commit guard hook installed and tested (blocks .env and secret patterns). Secret scan of history clean.
+- Sat Nov 21, 2026: Slack alerts done. 1.0 bot + #content-os-alerts, 1.7 alert.js, 1.8 alert on every pipeline failure (all pushed).
+- Mon Nov 23, 2026: 1.11 dotenv loads once. 3A.1 persona.json done: 6 topics, 10 themes (3 own and approved; AI-suggested themes are used only after status is set to approved), Bible translation chosen, banned words and scripture rules set.
+- Open: 1.12 guard hook not yet versioned; 2B.5 stale-cache risk; 3B.5/3B.6 quality issues found on the Austin sample (forced angles, "very" became "completely"); scripture_needed on three themes; verify the meekness and Barnabas notes before use.
+- Channels: #content-os-alerts (code errors, bot token in .env) and #content-approvals (reserved for the Make Approve button, Phase 1 end).

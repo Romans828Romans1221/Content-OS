@@ -3,11 +3,11 @@
 Principle: you write, AI structures. One task, one test, one thing broken at a time.
 Cadence: Mon-Thu 30-40 min hustle tasks. Fri and Sat 2.5-hour sprints. Sunday is Sabbath: no code, no logistics.
 
-## Where you are (Sat Nov 21)
-Working prototype: upload audio -> Gemini strategist -> JSON director -> Pixabay -> write file -> Make webhook.
-Problems fixed in this drop: Pixabay removed (zero stock footage), hardcoded file removed, model/mime/folders moved to config.js, staged runner with PASS/FAIL table, one folder per item (no overwrites), text (.md/.txt) input added, source-fidelity rule in the strategist prompt.
+## Where you are (Mon Nov 23, updated)
+Phase 0 is done and tagged. The pipeline runs end to end (audio or text in, content_package.json out) with a PASS/FAIL stage table, retries, a stage-2 cache, and no stock footage. Code is in a private GitHub repo with a commit guard that blocks secrets. Slack alerts work: any failed stage posts to #content-os-alerts. persona.json holds your voice, 6 topics and 10 themes.
+Now in Phase 1. Next: Supabase project and content_vault table (4A.1), then your first real weekly breakdown as test input. Task-level status lives in TASKS.md.
 
-## Phase 0: Foundation (today, ~2h)
+## Phase 0: Foundation (DONE Nov 21)
 1. Back up your current transcribe.js (`cp transcribe.js transcribe.old.js`), then copy in the new files.
 2. `node setup-folders.js` (creates all five folders plus fonts/music).
 3. Remove `PIXABAY_API_KEY` from .env. Add `GEMINI_MODEL` only if the ping fails.
@@ -16,7 +16,7 @@ Problems fixed in this drop: Pixabay removed (zero stock footage), hardcoded fil
 6. `node transcribe.js --stage=0` -> PASS. Then `node transcribe.js --file=01-Raw-Inbox/testAusinConvoAudio.m4a --stage=3`.
 Done when: a package folder appears in 02-Ready-To-Publish with content_package.json.
 
-## Phase 1: MVP loop (Weeks 1-3)
+## Phase 1: MVP loop (Weeks 1-3) (IN PROGRESS)
 Goal: your own writing in, your approved post out.
 - Hustle: write persona.json (tone, banned words, 5-7 topics, default Bible translation); create Slack bot + #content-approvals; create Supabase project + content_vault table.
 - Sprint: alert.js (Slack ping in every catch), persona injection on every call, schema validation with one retry, vault insert, text packs for Threads/X/LinkedIn with length validators, final.md gate (Slack never shows the AI draft), Make scenario with Approve button writing status back.

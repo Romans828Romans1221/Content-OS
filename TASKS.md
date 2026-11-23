@@ -46,7 +46,7 @@ Legend: `[x]` done, `[ ]` to do. Format: ID (priority, minutes, depends on) task
 - [ ] 3B.6 (P1, 45m, 3B.3) Intensifier check: flag strengthening words in the script (completely, deeply, absolutely) that are not in the source. Found Nov 21: "very different" became "completely different". TEST: Austin item flags "completely".
 
 ## Epic 4: Vault
-- [ ] 4A.1 (P0, 40m) HUSTLE: Supabase project + content_vault table. TEST: `select count(*) from content_vault` returns 0.
+- [x] 4A.1 (P0, 40m) HUSTLE: Supabase project + content_vault table. TEST: `select count(*) from content_vault` returns 0.
 - [ ] 4B.1 (P0, 35m, 4A.1, 3B.4) Supabase client + insertVault() (becomes stage 5). TEST: row id visible in dashboard.
 - [ ] 4B.2 (P0, 20m, 4B.1) source_type from filename prefix (bible_, sermon_, life_, tech_). TEST: 4 fixtures map correctly.
 - [ ] 4C.1 (P2, 30m, 4B.1) pgvector column. TEST: column exists.

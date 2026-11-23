@@ -36,7 +36,7 @@ Legend: `[x]` done, `[ ]` to do. Format: ID (priority, minutes, depends on) task
 - [ ] 2C.1 (P2, 45m, 2B.1) RSS feed to .md in inbox. TEST: `node feed.js` drops 3 files.
 
 ## Epic 3: Voice and strategy
-- [ ] 3A.1 (P0, 40m) HUSTLE: persona.json (tone, banned words, 5-7 topics, translation, no emojis). TEST: parses; has tone, banned, topics.
+- [x] 3A.1 (P0, 40m) HUSTLE: persona.json (tone, banned words, 5-7 topics, translation, no emojis). TEST: parses; has tone, banned, topics.
 - [ ] 3B.1 (P0, 25m, 3A.1) Persona prepended to every call. TEST: `--debug` prints start of system prompt with your tone.
 - [x] 3B.2 (P0, 45m) One call: transcript + 3 angles as JSON. TEST: `--stage=2` PASS (verified Nov 21).
 - [ ] 3B.3 (P0, 30m, 3B.2) check-fidelity.js: every source_quote exists in the source. TEST: prints OK for all quotes; flags a planted fake quote.

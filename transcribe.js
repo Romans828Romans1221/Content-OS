@@ -11,6 +11,7 @@ const { GoogleGenAI } = require("@google/genai");
 const { MODEL, MIME, FOLDERS, REQUIRED_ENV } = require("./config");
 const { withRetry, describeError } = require("./retry");
 const alert = require("./alert");
+const { generate } = require("./generate");
 
 const args = Object.fromEntries(
   process.argv.slice(2).map((a) => {
@@ -93,10 +94,7 @@ async function main() {
       angles = JSON.parse(fs.readFileSync(cacheFile, "utf8"));
       record(2, "strategist", true, "from cache (use --fresh to redo)");
     } else {
-      const res = await withRetry(
-        () =>
-          ai.models.generateContent({
-            model: MODEL,
+      const res = await generate(ai, "strategist", {
             contents: [
               {
                 role: "user",
@@ -114,13 +112,12 @@ async function main() {
               },
             ],
             config: { responseMimeType: "application/json" },
-          }),
-        { label: "strategist" }
-      );
+          });
       angles = JSON.parse(res.text);
+      angles.model_used = res.modelUsed;
       fs.mkdirSync(CACHE_DIR, { recursive: true });
       fs.writeFileSync(cacheFile, JSON.stringify(angles, null, 2));
-      record(2, "strategist", true, Object.keys(angles.angles || {}).join(","));
+      record(2, "strategist", true, Object.keys(angles.angles || {}).join(",") + ` [${res.modelUsed}]`);
     }
   } catch (err) {
     await fail(2, "strategist", err);
@@ -130,20 +127,16 @@ async function main() {
   // Stage 3: creative director. No stock-footage search; matching to your own B-roll comes in Sprint 6.
   let director;
   try {
-    const res = await withRetry(
-      () =>
-        ai.models.generateContent({
-          model: MODEL,
+    const res = await generate(ai, "director", {
           contents:
             "From these angles, return JSON {hook, script_body, camera_setup, editing_cues, broll_query, beat_query}. " +
             "script_body is 75-150 words. camera_setup must be low-energy and realistic. " +
             "Do not add ideas that are not in the angles.\n\n" +
             JSON.stringify(angles.angles),
           config: { responseMimeType: "application/json" },
-        }),
-      { label: "director" }
-    );
+        });
     director = JSON.parse(res.text);
+    director.model_used = res.modelUsed;
     record(3, "director", true, `hook: ${String(director.hook).slice(0, 40)}`);
   } catch (err) {
     await fail(3, "director", err);
@@ -161,6 +154,7 @@ async function main() {
       transcript: angles.transcript,
       angles: angles.angles,
       director,
+      model_used: angles.model_used || null,
       requires_ai_editing: false,
       requires_animation: false,
       status: "draft",

@@ -25,6 +25,8 @@ Legend: `[x]` done, `[ ]` to do. Format: ID (priority, minutes, depends on) task
 - [x] 1.8 (P0, 30m, 1.7) Call alert in every stage catch. TEST: bad API key sends a Slack alert in about 10s.
 - [x] 1.11 (P2, 10m) Load dotenv once. TEST: only one "injected env" line prints.
 - [ ] 1.12 (P2, 15m) Save the commit guard in the repo as scripts/pre-commit.sh plus a one-line install note, because .git/hooks is not versioned and is lost on a re-clone. TEST: fresh clone, run the install line, a staged fake key is blocked.
+- [x] 1.13 Model fallback chain: next model on 503/timeout/404, Slack note names the model used, model recorded in cache and package (generate.js)
+- [ ] 1.14 check-models.js: tests every candidate model with a known-good control and prints a table
 
 ## Epic 2: Ingest
 - [ ] 2A.1 (P0, 30m, 1.2) Inbox scanner. TEST: `node ingest.js --list` shows each file with its type.

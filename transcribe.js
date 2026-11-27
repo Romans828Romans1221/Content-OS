@@ -12,6 +12,7 @@ const { MODEL, MIME, FOLDERS, REQUIRED_ENV } = require("./config");
 const { withRetry, describeError } = require("./retry");
 const alert = require("./alert");
 const { generate } = require("./generate");
+const { normalizeAngles, presentAngles } = require("./angles");
 
 const args = Object.fromEntries(
   process.argv.slice(2).map((a) => {
@@ -103,9 +104,13 @@ async function main() {
                   {
                     text:
                       "Transcribe or read the source. Then extract three angles: faith_life, mindset, technical. " +
-                      "Use ONLY ideas present in the source. For each angle return: summary, source_quotes " +
-                      "(exact quotes from the source), and unsupported (anything you were tempted to add). " +
-                      "Return JSON: {transcript, angles:{faith_life:{summary,source_quotes,unsupported}, " +
+                      "Use ONLY ideas present in the source. Never stretch the author's words to fill an angle. " +
+                      "For each angle return: status (\"present\" or \"not_present\"), summary, source_quotes " +
+                      "(exact quotes copied word for word from the source), and unsupported (an array of strings: ideas you were tempted to add). " +
+                      "An angle is \"present\" only if the source clearly speaks to it and you can give at least one exact quote. " +
+                      "Otherwise set status to \"not_present\", summary to null, source_quotes to [], and give a short reason in unsupported. " +
+                      "The technical angle is the author's own technology, career, business or building work. Scripture or mindset reframed as logic models or systems is NOT technical. " +
+                      "Return JSON: {transcript, angles:{faith_life:{status,summary,source_quotes,unsupported}, " +
                       "mindset:{...}, technical:{...}}}.",
                   },
                 ],
@@ -122,6 +127,11 @@ async function main() {
   } catch (err) {
     await fail(2, "strategist", err);
   }
+  normalizeAngles(angles);
+  console.log("[angles] " + Object.entries(angles.angles).map(([k, a]) => `${k}:${a.status}`).join(" "));
+  if (!Object.values(angles.angles).some((a) => a.status === "present")) {
+    await fail(2, "strategist", new Error("no angle was present in the source"));
+  }
   if (MAX_STAGE === 2) return printTable();
 
   // Stage 3: creative director. No stock-footage search; matching to your own B-roll comes in Sprint 6.
@@ -132,7 +142,7 @@ async function main() {
             "From these angles, return JSON {hook, script_body, camera_setup, editing_cues, broll_query, beat_query}. " +
             "script_body is 75-150 words. camera_setup must be low-energy and realistic. " +
             "Do not add ideas that are not in the angles.\n\n" +
-            JSON.stringify(angles.angles),
+            JSON.stringify(presentAngles(angles.angles)),
           config: { responseMimeType: "application/json" },
         });
     director = JSON.parse(res.text);

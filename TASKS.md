@@ -29,7 +29,7 @@ Legend: `[x]` done, `[ ]` to do. Format: ID (priority, minutes, depends on) task
 ## Epic 2: Ingest
 - [ ] 2A.1 (P0, 30m, 1.2) Inbox scanner. TEST: `node ingest.js --list` shows each file with its type.
 - [ ] 2A.2 (P0, 25m, 2A.1) Processed ledger. TEST: second run prints `0 new items`.
-- [ ] 2B.1 (P0, 20m, 2A.1) Text path (.md/.txt). Code exists, untested. TEST: `--file=x.md --stage=1` prints character count.
+- [x] 2B.1 (P0, 20m, 2A.1) Text path (.md/.txt). Code exists, untested. TEST: `--file=x.md --stage=1` prints character count.
 - [x] 2B.2 (P0, 25m, 1.3) Audio upload with mime by extension. TEST: .m4a uploads (verified Nov 21).
 - [x] 2B.3 (P0, 30m) One dated folder per item, no overwrites. TEST: `ls 02-Ready-To-Publish` shows dated folder.
 - [ ] 2B.4 (P0, 30m, 2B.2) MOV to m4a via ffmpeg before upload. TEST: `ffprobe` shows no video stream.

@@ -79,4 +79,38 @@ async function generate(ai, label, params) {
   throw new Error(`${label}: all models failed. ${problems.join(" | ")}`);
 }
 
-module.exports = { generate, chain };
+// Task 3B.4: one answer check with one retry. The retry shows the model its own answer and the problems.
+function checkAnswer(text, validate) {
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (e) {
+    return [`not valid JSON (${String(e.message).slice(0, 60)})`];
+  }
+  return validate(data);
+}
+
+function withFeedback(contents, previous, problems) {
+  const note =
+    "Your previous answer was rejected for these problems: " + problems.join("; ") +
+    ". Return the complete corrected JSON only, following every original instruction.";
+  const prev = String(previous || "").slice(0, 6000);
+  if (Array.isArray(contents)) {
+    return [...contents, { role: "model", parts: [{ text: prev }] }, { role: "user", parts: [{ text: note }] }];
+  }
+  return String(contents) + "\n\nYOUR PREVIOUS ANSWER:\n" + prev + "\n\n" + note;
+}
+
+async function generateChecked(ai, label, validate, params) {
+  let res = await generate(ai, label, params);
+  let problems = checkAnswer(res.text, validate);
+  if (!problems.length) return res;
+  console.warn(`[check] ${label}: answer invalid (${problems.join("; ")}). Retrying once.`);
+  res = await generate(ai, label, { ...params, contents: withFeedback(params.contents, res.text, problems) });
+  problems = checkAnswer(res.text, validate);
+  if (problems.length) throw new Error(`${label}: answer still invalid after one retry: ${problems.join("; ")}`);
+  console.log(`[check] ${label}: valid after retry`);
+  return res;
+}
+
+module.exports = { generate, generateChecked, chain };

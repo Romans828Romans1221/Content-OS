@@ -11,7 +11,8 @@ const { GoogleGenAI } = require("@google/genai");
 const { MODEL, MIME, FOLDERS, REQUIRED_ENV } = require("./config");
 const { withRetry, describeError } = require("./retry");
 const alert = require("./alert");
-const { generate } = require("./generate");
+const { generateChecked } = require("./generate");
+const { validateStrategist, validateDirector } = require("./validate");
 const { normalizeAngles, presentAngles } = require("./angles");
 
 const args = Object.fromEntries(
@@ -95,7 +96,7 @@ async function main() {
       angles = JSON.parse(fs.readFileSync(cacheFile, "utf8"));
       record(2, "strategist", true, "from cache (use --fresh to redo)");
     } else {
-      const res = await generate(ai, "strategist", {
+      const res = await generateChecked(ai, "strategist", validateStrategist, {
             contents: [
               {
                 role: "user",
@@ -137,7 +138,7 @@ async function main() {
   // Stage 3: creative director. No stock-footage search; matching to your own B-roll comes in Sprint 6.
   let director;
   try {
-    const res = await generate(ai, "director", {
+    const res = await generateChecked(ai, "director", validateDirector, {
           contents:
             "From these angles, return JSON {hook, script_body, camera_setup, editing_cues, broll_query, beat_query}. " +
             "script_body is 75-150 words. camera_setup must be low-energy and realistic. " +

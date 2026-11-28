@@ -14,6 +14,7 @@ const alert = require("./alert");
 const { generateChecked } = require("./generate");
 const { validateStrategist, validateDirector } = require("./validate");
 const { normalizeAngles, presentAngles } = require("./angles");
+const { verifyQuotes } = require("./fidelity");
 
 const args = Object.fromEntries(
   process.argv.slice(2).map((a) => {
@@ -129,6 +130,12 @@ async function main() {
     await fail(2, "strategist", err);
   }
   normalizeAngles(angles);
+  const fidelitySource = ext === ".md" || ext === ".txt" ? fs.readFileSync(filePath, "utf8") : angles.transcript || "";
+  const fid = verifyQuotes(angles, fidelitySource);
+  console.log(`[fidelity] ${fid.checked} quote(s) checked: ${fid.exact} exact, ${fid.close} close, ${fid.missing} not found` + (fid.downgraded.length ? `; downgraded to not_present: ${fid.downgraded.join(", ")}` : ""));
+  if (fid.downgraded.length || fid.missing * 2 > fid.checked) {
+    await alert.send(`Fidelity check on ${path.basename(filePath)}: ${fid.missing} of ${fid.checked} quotes were not found in the source` + (fid.downgraded.length ? `. Downgraded to not_present: ${fid.downgraded.join(", ")}` : "") + ".");
+  }
   console.log("[angles] " + Object.entries(angles.angles).map(([k, a]) => `${k}:${a.status}`).join(" "));
   if (!Object.values(angles.angles).some((a) => a.status === "present")) {
     await fail(2, "strategist", new Error("no angle was present in the source"));

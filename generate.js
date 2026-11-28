@@ -7,6 +7,7 @@
 const { MODEL } = require("./config");
 const { describeError } = require("./retry");
 const alert = require("./alert");
+const persona = require("./persona");
 
 const TRIES_PER_MODEL = 2;
 const TIMEOUT_MS = Number(process.env.GEMINI_TIMEOUT_MS) || 120000;
@@ -41,13 +42,22 @@ function withTimeout(promise, ms) {
 
 async function generate(ai, label, params) {
   const models = chain();
+  const p = persona.build(label);
+  console.log(`[persona] ${label}: ${p.full ? `full, ${p.themeCount} approved theme(s)` : "light (voice and scripture rules only)"}`);
+  const withPersona = {
+    ...params,
+    config: {
+      ...(params.config || {}),
+      systemInstruction: p.text + (params.config && params.config.systemInstruction ? "\n\n" + params.config.systemInstruction : ""),
+    },
+  };
   const problems = [];
   for (let m = 0; m < models.length; m++) {
     const model = models[m];
     for (let i = 1; i <= TRIES_PER_MODEL; i++) {
       const started = Date.now();
       try {
-        const res = await withTimeout(ai.models.generateContent({ ...params, model }), TIMEOUT_MS);
+        const res = await withTimeout(ai.models.generateContent({ ...withPersona, model }), TIMEOUT_MS);
         res.modelUsed = model;
         console.log(`[model] ${label} ${model} answered in ${((Date.now() - started) / 1000).toFixed(1)}s`);
         if (m > 0) {

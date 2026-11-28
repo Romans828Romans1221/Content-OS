@@ -42,7 +42,7 @@ Legend: `[x]` done, `[ ]` to do. Format: ID (priority, minutes, depends on) task
 - [x] 3A.1 (P0, 40m) HUSTLE: persona.json (tone, banned words, 5-7 topics, translation, no emojis). TEST: parses; has tone, banned, topics.
 - [x] 3B.1 (P0, 25m, 3A.1) Persona prepended to every call. TEST: `--debug` prints start of system prompt with your tone.
 - [x] 3B.2 (P0, 45m) One call: transcript + 3 angles as JSON. TEST: `--stage=2` PASS (verified Nov 21).
-- [ ] 3B.3 (P0, 30m, 3B.2) check-fidelity.js: every source_quote exists in the source. TEST: prints OK for all quotes; flags a planted fake quote.
+- [x] 3B.3 (P0, 30m, 3B.2) check-fidelity.js: every source_quote exists in the source. TEST: prints OK for all quotes; flags a planted fake quote.
 - [x] 3B.4 (P0, 40m, 1.7) Schema validator, one retry, then alert. TEST: malformed fixture retries once then alerts.
 - [x] 3B.5 (P0, 30m, 3B.4) Angles may return `not_present` instead of being padded; `unsupported` must be an array. Found Nov 21: forced "faith" and "technical" angles on a thin audio. TEST: the Austin sample returns technical as not_present.
 - [ ] 3B.6 (P1, 45m, 3B.3) Intensifier check: flag strengthening words in the script (completely, deeply, absolutely) that are not in the source. Found Nov 21: "very different" became "completely different". TEST: Austin item flags "completely".

@@ -62,7 +62,7 @@
       "topics": ["faith", "business", "fitness"],
       "scriptures": ["Colossians 3:23"],
       "source": "ai_suggested",
-      "status": "approved"
+      "status": "needs_my_review"
     },
     {
       "id": "guard_inputs",
@@ -71,7 +71,7 @@
       "topics": ["faith", "tech_career"],
       "scriptures": ["Proverbs 4:23"],
       "source": "ai_suggested",
-      "status": "approved"
+      "status": "needs_my_review"
     },
     {
       "id": "strength_under_control",
@@ -91,7 +91,7 @@
       "topics": ["faith"],
       "scriptures": ["Luke 5:16"],
       "source": "ai_suggested",
-      "status": "approved"
+      "status": "needs_my_review"
     },
     {
       "id": "curate_brotherhood",
@@ -101,7 +101,7 @@
       "scriptures": ["Proverbs 27:17"],
       "note": "Check the Barnabas role against how scripture describes him (encourager) before leaning on it.",
       "source": "ai_suggested",
-      "status": "approved"
+      "status": "needs_my_review"
     },
     {
       "id": "financial_mastery",
